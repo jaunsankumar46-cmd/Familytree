@@ -1,74 +1,81 @@
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-typedef struct Person {
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+typedef struct person
+{
     char name[50];
     int age;
-    struct Person *father;
-    struct Person *mother;
-} Person;
-Person *create_person(const char *name, int age);
-void read_person_info(const char *role, char *name_out, int *age_out);
+    struct person *father;
+    struct person *mother;
+}Person;
 Person *create_person(const char *name, int age)
 {
     Person *person = malloc(sizeof(Person));
-    if (person == NULL) {
+    if (person == NULL)
+    {
         printf("Memory allocation failed.\n");
-        exit(EXIT_FAILURE);
+        return NULL;
     }
-    strncpy(person->name, name, sizeof(person->name) - 1);
-    person->name[sizeof(person->name) - 1] = '\0';
+    snprintf(person->name,sizeof(person->name),"%s",name);
     person->age = age;
     person->father = NULL;
     person->mother = NULL;
     return person;
 }
-void person_info(const char *role, char *name_out, int *age_out)
+void personinfo(const char *role, char *namept, int *agept)
 {
-    printf("\nEnter name for %s: ", role);
-    if (fgets(name_out, 50, stdin) == NULL) {
-        printf("Input error.\n");
+    printf("Enter name of %s: ", role);
+    if (fgets(namept, 50, stdin) == NULL)
+    {
+        printf("Invalid name.\n");
         exit(EXIT_FAILURE);
     }
-    name_out[strcspn(name_out, "\n")] = '\0';
-    printf("Enter age for %s: ", role);
-    while (scanf("%d", age_out) != 1 || *age_out < 0) {
-        printf("Invalid age. Enter a non-negative integer: ");
-        int ch;
-        while ((ch = getchar()) != '\n' && ch != EOF) {
-        }
+    namept[strcspn(namept, "\n")] = '\0';
+    printf("Enter age of %s: ", role);
+    if (scanf("%d", agept) != 1 || *agept < 0)
+    {
+        printf("Invalid age.\n");
+        exit(EXIT_FAILURE);
     }
-    int ch;
-    while ((ch = getchar()) != '\n' && ch != EOF) {
-    }
+    getchar();
 }
 int main(void)
 {
-    char name[7][50];
-    int age[7];
+    Person *people[7] = {NULL};
     const char *roles[7] = {
         "Yourself",
-        "Mother",
         "Father",
-        "Paternal Grandfather",
-        "Paternal Grandmother",
-        "Maternal Grandfather",
-        "Maternal Grandmother",
+        "Mother",
+        "Paternal grandfather",
+        "Paternal grandmother",
+        "Maternal grandfather",
+        "Maternal grandmother"
+        
     };
-    Person *people[7];
-    for (int i = 0; i < 7; i++)
-     {
-        person_info(roles[i], name[i], &age[i]);
-        people[i] = create_person(name[i], age[i]);
+    char name[50];
+    int age;
+    for(int i = 0; i<7;i++)
+    {
+        personinfo(roles[i],name,&age);
+        people[i] = create_person(name, age);
+        if (people[i] == NULL)
+        {
+            for ( int j = 0; j< i; j++)
+            {
+                free(people[j]);
+            }
+            return 1;
     }
-    printf("\n=== FAMILY MEMBERS ENTERED ===\n");
-    for (int i = 0; i < 7; i++) {
-        printf("%s: %s, Age: %d\n",
-               roles[i], people[i]->name, people[i]->age);
-    }
-    for (int i = 0; i < 7; i++) {
-        free(people[i]);
-    }
-    return 0;
+}
+printf("\n__________________________\n FAMILY MEMBERS \n________________________\n");
+for (int i = 0; i < 7; i++)
+{
+    printf("%s: %s, Age: %d\n",roles[i],people[i]->name,people[i]->age);
+}
+for (int i = 0; i < 7;i++)
+{
+    free(people[i]);
+    people[i] = NULL;
+}
+return 0;
 }
