@@ -44,16 +44,31 @@ void read_person_info(const char *role, char *namept, int *agept)
     }
     getchar();
 }
-void print_family_relationships(const Person *me)
+void print_family_relationships(const Person *yourself)
 {
-printf("\n=============\n FAMILY TREE \n=============\n");
-printf("me : %s, Age : %d\n",me->name,me->age);
-printf("Father : %s, Age : %d\n",me->father->name,me->father->age);
-printf("mother : %s, Age : %d\n",me->mother->name,me->mother->age);
-printf("Paternal grandfather : %s, Age : %d\n", me->father->father->name,me->father->father->age);
-printf("Paternal grandmother : %s, Age : %d\n",me->father->mother->name,me->father->mother->age);
-printf("Maternal grandfather : %s, Age : %d\n", me->mother->father->name,me->mother->father->age);
-printf("Maternal grandmother : %s, Age : %d\n",me->mother->mother->name,me->mother->mother->age);
+    printf("\n=== FAMILY TREE RELATIONSHIPS ===\n\n");
+    printf("1. YOURSELF:\n");
+    printf("   - Name: %s | Age: %d\n\n",
+           yourself->name, yourself->age);
+    printf("2. PARENTS:\n");
+    printf("   - Father: %s | Age: %d\n",
+           yourself->father->name, yourself->father->age);
+    printf("   - Mother: %s | Age: %d\n\n",
+           yourself->mother->name, yourself->mother->age);
+    printf("3. PATERNAL GRANDPARENTS (via Father's Pointers):\n");
+    printf("   - Grandfather: %s | Age: %d\n",
+           yourself->father->father->name,
+           yourself->father->father->age);
+    printf("   - Grandmother: %s | Age: %d\n\n",
+           yourself->father->mother->name,
+           yourself->father->mother->age);
+    printf("4. MATERNAL GRANDPARENTS (via Mother's Pointers):\n");
+    printf("   - Grandfather: %s | Age: %d\n",
+           yourself->mother->father->name,
+           yourself->mother->father->age);
+    printf("   - Grandmother: %s | Age: %d\n",
+           yourself->mother->mother->name,
+           yourself->mother->mother->age);
 }
 void free_family_tree(Person *people[], int count)
 {
@@ -61,6 +76,42 @@ void free_family_tree(Person *people[], int count)
     {
         free(people[i]);
         people[i] = NULL;
+    }
+}
+void print_tree_visual(const Person *root, int level)
+{
+    (void)level;
+    if (root == NULL)
+    {
+        return;
+    }
+    printf("%s (Age: %d)\n", root->name, root->age);
+    if (root->father != NULL)
+    {
+        printf("|\n");
+        printf("|___ Father: %s (Age: %d)\n",
+               root->father->name, root->father->age);
+        printf("|    |_______ Grandfather: %s (Age: %d)\n",
+               root->father->father->name,
+               root->father->father->age);
+        printf("|    |\n");
+        printf("|    |_______ Grandmother: %s (Age: %d)\n",
+               root->father->mother->name,
+               root->father->mother->age);
+    }
+    if (root->mother != NULL)
+    {
+        printf("|\n");
+        printf("|___ Mother: %s (Age: %d)\n",
+               root->mother->name, root->mother->age);
+        printf("     |_______ Grandfather: %s (Age: %d)\n",
+               root->mother->father->name,
+               root->mother->father->age);
+        printf("     |\n");
+
+        printf("     |_______ Grandmother: %s (Age: %d)\n",
+               root->mother->mother->name,
+               root->mother->mother->age);
     }
 }
 int main(void)
@@ -94,8 +145,9 @@ int main(void)
 link_parents(people[0],people[1],people[2]);
 link_parents(people[1],people[3],people[4]);
 link_parents(people[2],people[5],people[6]);
-
 print_family_relationships(people[0]);
+printf("\n=== VISUAL FAMILY TREE ===\n\n");
+print_tree_visual(people[0], 0);
 free_family_tree(people, 7);
 return 0;
 
