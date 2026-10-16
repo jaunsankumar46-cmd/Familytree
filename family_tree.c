@@ -65,17 +65,27 @@ int main(void)
                 free(people[j]);
             }
             return 1;
-    }
+        }
 }
-printf("\n__________________________\n FAMILY MEMBERS \n________________________\n");
-for (int i = 0; i < 7; i++)
-{
-    printf("%s: %s, Age: %d\n",roles[i],people[i]->name,people[i]->age);
-}
-for (int i = 0; i < 7;i++)
+people[0]->father = people[1];
+people[0]->mother = people[2];
+people[1]->father = people[3];
+people[1]->mother = people[4];
+people[2]->father = people[5];
+people[2]->mother = people[6];
+printf("\n=============\n FAMILY TREE \n=============\n");
+printf("Yourself : %s,Age : %d\n",people[0]->name, people[0]->age);
+printf("   Father : %s, Age : %d\n",people[0]->father->name,people[0]->father->age);
+printf("      Paternal grandfather : %s, Age : %d\n", people[0]->father->father->name,people[0]->father->father->age);
+printf("      Paternal grandmother : %s,Age : %d\n",people[0]->father->mother->name,people[0]->father->mother->age);
+printf("   mother : %s, Age : %d\n",people[0]->mother->name,people[0]->mother->age);
+printf("      Maternal grandfather : %s, Age : %d\n", people[0]->mother->father->name,people[0]->mother->father->age);
+printf("      Maternal grandmother : %s,Age : %d\n",people[0]->mother->mother->name,people[0]->mother->mother->age);
+for (int i =0; i<7;i++)
 {
     free(people[i]);
-    people[i] = NULL;
+    people[i]=NULL;
 }
 return 0;
+
 }
