@@ -1,12 +1,12 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-typedef struct person
+typedef struct Person
 {
     char name[50];
     int age;
-    struct person *father;
-    struct person *mother;
+    struct Person *father;
+    struct Person *mother;
 }Person;
 Person *create_person(const char *name, int age)
 {
@@ -22,7 +22,12 @@ Person *create_person(const char *name, int age)
     person->mother = NULL;
     return person;
 }
-void personinfo(const char *role, char *namept, int *agept)
+void link_parents(Person *child, Person *father, Person *mother)
+{
+    child->father = father;
+    child->mother = mother;
+}
+void read_person_info(const char *role, char *namept, int *agept)
 {
     printf("Enter name of %s: ", role);
     if (fgets(namept, 50, stdin) == NULL)
@@ -38,6 +43,25 @@ void personinfo(const char *role, char *namept, int *agept)
         exit(EXIT_FAILURE);
     }
     getchar();
+}
+void print_family_relationships(const Person *me)
+{
+printf("\n=============\n FAMILY TREE \n=============\n");
+printf("me : %s, Age : %d\n",me->name,me->age);
+printf("Father : %s, Age : %d\n",me->father->name,me->father->age);
+printf("mother : %s, Age : %d\n",me->mother->name,me->mother->age);
+printf("Paternal grandfather : %s, Age : %d\n", me->father->father->name,me->father->father->age);
+printf("Paternal grandmother : %s, Age : %d\n",me->father->mother->name,me->father->mother->age);
+printf("Maternal grandfather : %s, Age : %d\n", me->mother->father->name,me->mother->father->age);
+printf("Maternal grandmother : %s, Age : %d\n",me->mother->mother->name,me->mother->mother->age);
+}
+void free_family_tree(Person *people[], int count)
+{
+    for (int i =0; i < count; i++)
+    {
+        free(people[i]);
+        people[i] = NULL;
+    }
 }
 int main(void)
 {
@@ -56,7 +80,7 @@ int main(void)
     int age;
     for(int i = 0; i<7;i++)
     {
-        personinfo(roles[i],name,&age);
+        read_person_info(roles[i],name,&age);
         people[i] = create_person(name, age);
         if (people[i] == NULL)
         {
@@ -65,27 +89,14 @@ int main(void)
                 free(people[j]);
             }
             return 1;
-        }
+    }
 }
-people[0]->father = people[1];
-people[0]->mother = people[2];
-people[1]->father = people[3];
-people[1]->mother = people[4];
-people[2]->father = people[5];
-people[2]->mother = people[6];
-printf("\n=============\n FAMILY TREE \n=============\n");
-printf("Yourself : %s,Age : %d\n",people[0]->name, people[0]->age);
-printf("   Father : %s, Age : %d\n",people[0]->father->name,people[0]->father->age);
-printf("      Paternal grandfather : %s, Age : %d\n", people[0]->father->father->name,people[0]->father->father->age);
-printf("      Paternal grandmother : %s,Age : %d\n",people[0]->father->mother->name,people[0]->father->mother->age);
-printf("   mother : %s, Age : %d\n",people[0]->mother->name,people[0]->mother->age);
-printf("      Maternal grandfather : %s, Age : %d\n", people[0]->mother->father->name,people[0]->mother->father->age);
-printf("      Maternal grandmother : %s,Age : %d\n",people[0]->mother->mother->name,people[0]->mother->mother->age);
-for (int i =0; i<7;i++)
-{
-    free(people[i]);
-    people[i]=NULL;
-}
+link_parents(people[0],people[1],people[2]);
+link_parents(people[1],people[3],people[4]);
+link_parents(people[2],people[5],people[6]);
+
+print_family_relationships(people[0]);
+free_family_tree(people, 7);
 return 0;
 
 }
