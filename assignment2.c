@@ -6,4 +6,8 @@ typedef struct Taxon{
     int lifespan;
     struct Taxon *parent_group;
 }Taxon;
-
+Taxon*create(const char *name, int lifespan)
+{
+    struct create_tason() = malloc(sizeof(struct Taxon));
+    parent_group=NULL;
+}
